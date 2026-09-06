@@ -6,8 +6,9 @@ export default function EnquiryForm() {
   
   async function submit(e) {
     e.preventDefault();
+    const form = e.currentTarget;
     setStatus("Sending...");
-    const data = Object.fromEntries(new FormData(e.currentTarget));
+    const data = Object.fromEntries(new FormData(form));
     try {
       if (!apiBase) throw new Error("API is not configured");
       const r = await fetch(`${apiBase}/api/enquiries`, {
@@ -15,8 +16,9 @@ export default function EnquiryForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      console.log("Enquiry response:", r);
       if (!r.ok) throw Error();
-      e.currentTarget.reset();
+      form.reset();
       setStatus("Thank you — we’ll be in touch shortly.");
     } catch {
       setStatus("Something went wrong. Please try again.");
