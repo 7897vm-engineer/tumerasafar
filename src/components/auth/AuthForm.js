@@ -6,6 +6,7 @@ import { useState } from "react";
 export default function AuthForm({ mode }) {
   const signup = mode === "signup";
   const router = useRouter();
+  const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   async function submit(event) {
@@ -14,11 +15,13 @@ export default function AuthForm({ mode }) {
     setLoading(true);
     const values = Object.fromEntries(new FormData(event.currentTarget));
     try {
+      if (!apiBase) throw new Error("Authentication is not configured. Please try again later.");
       const response = await fetch(
-        `/api/auth/${signup ? "register" : "login"}`,
+        `${apiBase}/api/auth/${signup ? "register" : "login"}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify(values),
         },
       );

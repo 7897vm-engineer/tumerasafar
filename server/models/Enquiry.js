@@ -1,1 +1,1 @@
-import mongoose from "mongoose"; export default mongoose.model("Enquiry",new mongoose.Schema({name:String,email:String,phone:String,message:String,package:String,status:{type:String,default:"new"}},{timestamps:true}));
+import mongoose from "mongoose"; const schema = new mongoose.Schema({ name: String, email: String, phone: String, message: String, package: String, status: { type: String, default: "new" } }, { timestamps: true }); export default mongoose.models.Enquiry || mongoose.model("Enquiry", schema);
