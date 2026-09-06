@@ -13,8 +13,22 @@ const app = express();
 // Security
 app.use(helmet());
 
-const allowedOrigins = (process.env.WEB_ORIGIN || "http://localhost:3000").split(",").map((origin) => origin.trim()).filter(Boolean);
-app.use(cors({ origin(origin, callback) { if (!origin || allowedOrigins.includes(origin)) return callback(null, true); return callback(new Error("Origin is not allowed by CORS")); }, credentials: true }));
+const defaultOrigins = ["https://tumerasafar.vercel.app", "http://localhost:3000"];
+const configuredOrigins = (process.env.WEB_ORIGIN || "").split(",").map((origin) => origin.trim().replace(/\/$/, "")).filter(Boolean);
+const allowedOrigins = new Set([...defaultOrigins, ...configuredOrigins]);
+const corsOptions = {
+  origin(origin, callback) {
+    // Requests without an Origin header (health checks/server-to-server) are not browser CORS requests.
+    if (!origin || allowedOrigins.has(origin.replace(/\/$/, ""))) return callback(null, true);
+    return callback(new Error("Origin is not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 // JSON body
 app.use(express.json({ limit: "20kb" }));
