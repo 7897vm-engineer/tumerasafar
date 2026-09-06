@@ -15,7 +15,7 @@
 
 ## API boundary
 
-The Next route handler at `POST /api/enquiries` validates inputs with Zod and writes via Mongoose. The standalone Express API mirrors this under `/api/enquiries`, adds Helmet, CORS and rate limiting, and is ready for separate deployment. New resource modules should follow `routes → validation → service/model → response` and enforce JWT role middleware for vendor/admin mutations.
+The Next.js frontend calls the standalone Express API through `NEXT_PUBLIC_API_URL`. Express owns `/api/enquiries` and `/api/auth`, adds Helmet, CORS and rate limiting, and is deployed independently from the Vercel frontend. New backend modules should follow `routes → validation → service/model → response` and enforce JWT role middleware for vendor/admin mutations.
 
 ## Environment & security
 
